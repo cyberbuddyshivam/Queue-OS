@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MonadQueue — Plug-and-Play Vendor-Paid Booking Platform on Monad</title>
+  <meta name="description" content="Decentralized, B2B2C vendor-funded queue and ticketing platform on Monad testnet. Vendors fund capacity; end users claim slots 100% free with gasless sponsorship.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header>
+    <div class="header-container">
+      <a href="#" class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#FFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Monad<span>Queue</span></h1>
+        </div>
+        <span class="brand-tag">B2B2C</span>
+      </a>
+
+      <!-- Portal Navigation Tabs -->
+      <nav class="portal-tabs" role="tablist">
+        <button class="tab-btn active" data-target="vendor-portal" id="tab-vendor">
+          🏢 Vendor Portal
+        </button>
+        <button class="tab-btn" data-target="user-portal" id="tab-user">
+          🎟️ Free Bookings
+        </button>
+        <button class="tab-btn" data-target="scanner-terminal" id="tab-scanner">
+          📱 Gatekeeper Scanner
+        </button>
+        <button class="tab-btn" data-target="platform-info" id="tab-info">
+          ⚡ Monad Gas & Specs
+        </button>
+      </nav>
+
+      <!-- Network & Wallet Actions -->
+      <div class="header-actions">
+        <div class="network-badge" title="Target Network: Monad Testnet (EVM compatible, 10,000 TPS, 400ms block time)">
+          <span class="network-dot"></span>
+          <span>Monad Testnet (10143)</span>
+        </div>
+        <button class="btn-connect" id="btn-connect-wallet">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="4"></rect>
+            <path d="M16 12h2"></path>
+          </svg>
+          <span id="wallet-btn-label">Connect Wallet</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Container -->
+  <main>
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <div class="hero-pill">
+          <span>⚡ Monad High-Throughput Engine (10,000 TPS · 400ms Blocks)</span>
+        </div>
+        <h2 class="hero-title">Vendor-Funded Capacity.<br>Zero-Cost End User Queues.</h2>
+        <p class="hero-desc">
+          A truly frictionless B2B2C booking infrastructure. Vendors deposit prepaid credits or subscriptions onchain, while attendees claim slots 100% free with gasless EIP-712 meta-transactions.
+        </p>
+
+        <div class="hero-stats">
+          <div class="hero-stat-card">
+            <div class="hero-stat-label">Active Queues</div>
+            <div class="hero-stat-value" id="stat-active-queues">4</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="hero-stat-label">Free Slots Claimed</div>
+            <div class="hero-stat-value" id="stat-slots-claimed">142</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="hero-stat-label">User Gas Saved</div>
+            <div class="hero-stat-value" id="stat-gas-saved">100%</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="hero-stat-label">Check-in Rate</div>
+            <div class="hero-stat-value" id="stat-checkin-rate">86.4%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: VENDOR PORTAL -->
+    <section class="tab-panel active" id="vendor-portal">
+      <div class="portal-grid">
+        
+        <!-- Left Column: Manage Queues & Metering -->
+        <div class="portal-left">
+          
+          <!-- Vendor Status Card -->
+          <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-icon">📊</span>
+                <span>Vendor Usage & Credit Metering</span>
+              </div>
+              <span class="queue-badge active" id="vendor-status-badge">Vendor Active</span>
+            </div>
+
+            <!-- Low Balance Warning (Conditional) -->
+            <div class="alert-banner warning" id="low-balance-alert" style="display: none;">
+              <div class="alert-icon">⚠️</div>
+              <div class="alert-text">
+                <h4>Vendor Balance Warning</h4>
+                <p>Your prepaid balance is running low (<span id="alert-balance-val">0.002</span> MON remaining). Fund credits to ensure new user claims are not rejected.</p>
+              </div>
+              <button class="btn btn-primary" id="btn-quick-fund" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Fund Now</button>
+            </div>
+
+            <div class="hero-stats" style="margin-bottom: 1.5rem;">
+              <div class="hero-stat-card" style="flex: 1;">
+                <div class="hero-stat-label">Prepaid Balance</div>
+                <div class="hero-stat-value" id="vendor-balance-display">0.450 MON</div>
+              </div>
+              <div class="hero-stat-card" style="flex: 1;">
+                <div class="hero-stat-label">Plan Type</div>
+                <div class="hero-stat-value" id="vendor-plan-display" style="font-size: 1.1rem;">Prepaid Credits</div>
+              </div>
+              <div class="hero-stat-card" style="flex: 1;">
+                <div class="hero-stat-label">Burn Rate</div>
+                <div class="hero-stat-value" style="font-size: 1.1rem; color: var(--accent-cyan);">0.001 MON/claim</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <button class="btn btn-primary" id="btn-open-deposit-modal">
+                <span>➕ Deposit Prepaid Credits</span>
+              </button>
+              <button class="btn btn-secondary" id="btn-open-queue-modal">
+                <span>📅 Create New Queue</span>
+              </button>
+              <button class="btn btn-outline" id="btn-withdraw-credits">
+                <span>💸 Withdraw Unused Balance</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Vendor Queues Table -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-icon">📑</span>
+                <span>Active Vendor Queues</span>
+              </div>
+              <span style="font-size: 0.8rem; color: var(--text-dim);" id="vendor-queue-count">Showing 3 queues</span>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table class="data-table" id="vendor-queues-table">
+                <thead>
+                  <tr>
+                    <th>Queue ID</th>
+                    <th>Title & Offchain URI</th>
+                    <th>Claimed / Capacity</th>
+                    <th>Checked-in</th>
+                    <th>Fee / Claim</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="vendor-queues-tbody">
+                  <!-- Dynamically Rendered -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Vendor Registration & Onboarding -->
+        <div class="portal-right">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-icon">🚀</span>
+                <span>Vendor Onboarding</span>
+              </div>
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+              Register your organization on Monad to start hosting free queues for your attendees. Choose your billing plan:
+            </p>
+
+            <form id="form-vendor-onboarding">
+              <div class="plan-cards">
+                <label class="plan-card selected" id="plan-card-prepaid">
+                  <input type="radio" name="planType" value="0" checked>
+                  <div class="plan-name">Prepaid Credits</div>
+                  <div class="plan-cost">Pay-Per-Claim</div>
+                  <div class="plan-desc">Metered 0.001 MON automatically debited only when a user claims a slot.</div>
+                </label>
+
+                <label class="plan-card" id="plan-card-sub">
+                  <input type="radio" name="planType" value="1">
+                  <div class="plan-name">Subscription</div>
+                  <div class="plan-cost">0.05 MON / 30d</div>
+                  <div class="plan-desc">Unlimited slots & claims for enterprise events and busy venues.</div>
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="initial-deposit">Initial Funding Amount (MON)</label>
+                <input class="form-input" type="number" id="initial-deposit" step="0.01" min="0.005" value="0.05">
+                <span style="font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; display: block;">Min deposit: 0.005 MON. Unused funds can be withdrawn at any time.</span>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-full" id="btn-register-vendor">
+                <span>Register & Fund Vendor Account</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Quick Info Box -->
+          <div class="card" style="margin-top: 1.5rem; background: rgba(139, 117, 255, 0.05);">
+            <h4 style="font-size: 0.9rem; color: var(--accent-purple); margin-bottom: 0.5rem;">💡 Why Monad for Queues?</h4>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5;">
+              Monad's 400ms block times and 10,000 TPS mean thousands of users can claim slots simultaneously during high-demand drops without network congestion or skyrocketing gas prices.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2: USER FREE BOOKING PORTAL -->
+    <section class="tab-panel" id="user-portal">
+      
+      <!-- Gasless Banner -->
+      <div class="alert-banner" style="background: rgba(0, 245, 212, 0.1); border-color: rgba(0, 245, 212, 0.3); margin-bottom: 2rem;">
+        <div class="alert-icon">✨</div>
+        <div class="alert-text">
+          <h4 style="color: var(--accent-cyan);">100% Free Booking for End Users</h4>
+          <p>Vendors have pre-funded all operational and queue costs. You pay 0 MON. You can also toggle Gasless Meta-Transaction mode to claim with zero gas!</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <label style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-secondary);" for="toggle-gasless">Gasless Relayer:</label>
+          <input type="checkbox" id="toggle-gasless" checked style="accent-color: var(--accent-cyan); width: 18px; height: 18px;">
+        </div>
+      </div>
+
+      <div class="portal-grid">
+        
+        <!-- Left: Public Queue Directory -->
+        <div class="portal-left">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.4rem; font-weight: 700; color: #FFF;">Explore Active Queues</h3>
+            <span style="font-size: 0.85rem; color: var(--text-secondary);">Real-time inventory on Monad</span>
+          </div>
+
+          <div class="queue-grid" id="public-queues-container">
+            <!-- Dynamically Rendered -->
+          </div>
+        </div>
+
+        <!-- Right: My Digital Passes / Tickets -->
+        <div class="portal-right">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-icon">🎟️</span>
+                <span>My Queue Passes</span>
+              </div>
+              <span class="queue-badge active" id="user-tickets-count">0 Tickets</span>
+            </div>
+
+            <div id="user-tickets-list">
+              <div style="text-align: center; padding: 2rem 1rem; color: var(--text-dim);" id="no-tickets-placeholder">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎫</div>
+                <p style="font-size: 0.85rem;">You haven't claimed any slots yet.</p>
+                <p style="font-size: 0.75rem;">Click "Claim Free Slot" on any queue on the left to get your ticket.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3: GATEKEEPER SCANNER TERMINAL -->
+    <section class="tab-panel" id="scanner-terminal">
+      <div class="portal-grid" style="grid-template-columns: 420px 1fr;">
+        
+        <!-- Scanner Terminal Controls -->
+        <div class="portal-left">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-icon">📱</span>
+                <span>Gatekeeper Check-in Terminal</span>
+              </div>
+              <span class="queue-badge active">Scanner Ready</span>
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+              Verify and redeem attendee tickets on Monad testnet. Only authorized vendor staff can execute check-in.
+            </p>
+
+            <!-- Animated Reticle Viewport -->
+            <div class="scanner-viewport">
+              <div class="scanner-reticle">
+                <div class="scanner-laser"></div>
+              </div>
+              <div style="position: absolute; bottom: 12px; font-size: 0.7rem; font-family: var(--font-mono); color: var(--accent-cyan);">
+                READY TO VERIFY QR PASS
+              </div>
+            </div>
+
+            <!-- Manual Ticket Input Form -->
+            <form id="form-checkin-scanner">
+              <div class="form-group">
+                <label class="form-label" for="scan-queue-id">Queue ID</label>
+                <input class="form-input" type="number" id="scan-queue-id" value="1" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="scan-ticket-id">Ticket ID / Pass Token</label>
+                <input class="form-input" type="number" id="scan-ticket-id" placeholder="e.g. 1" required>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-full" id="btn-verify-checkin">
+                <span>⚡ Verify & Redeem Ticket</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Check-in Audit Feed -->
+        <div class="portal-right">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-icon">📋</span>
+                <span>Live Check-in Redemption Log</span>
+              </div>
+              <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--accent-cyan);" id="live-checkin-counter">3 Verified Today</span>
+            </div>
+
+            <div style="overflow-x: auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Ticket ID</th>
+                    <th>Queue</th>
+                    <th>Claimant Address</th>
+                    <th>Redeemed At</th>
+                    <th>Scanner</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="checkin-feed-tbody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 4: MONAD GAS & SPECS -->
+    <section class="tab-panel" id="platform-info">
+      <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-title-icon">⚡</span>
+            <span>Monad Technical Architecture & Gas Guidelines</span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+          
+          <div class="card" style="background: rgba(11, 8, 24, 0.6);">
+            <h4 style="color: var(--accent-purple); font-size: 1rem; margin-bottom: 0.5rem;">1. Gas Charged on Limit, Not Gas Used</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+              Unlike Ethereum, Monad asynchronous execution charges based on <code>gas_limit * gas_price</code>. Unnecessarily inflated gas limits waste real MON. MonadQueue hardcodes explicit, tight limits (e.g. 45,000 gas for free claims).
+            </p>
+          </div>
+
+          <div class="card" style="background: rgba(11, 8, 24, 0.6);">
+            <h4 style="color: var(--accent-purple); font-size: 1rem; margin-bottom: 0.5rem;">2. 200M Block Gas Limit & 400ms Blocks</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+              Monad features 200M gas per block (6.6x Ethereum) and sub-second finality (800ms). This allows flash queue drops with thousands of concurrent bookings without choking the mempool.
+            </p>
+          </div>
+
+          <div class="card" style="background: rgba(11, 8, 24, 0.6);">
+            <h4 style="color: var(--accent-purple); font-size: 1rem; margin-bottom: 0.5rem;">3. Cold Storage & Precompile Pricing</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+              Cold storage read is 8,100 gas (+6,000 vs ETH), and <code>ecrecover</code> precompile is 6,000 gas (2x ETH). MonadQueue caches memory structs to avoid repeated cold SLOADs during bulk operations.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Contract Registry -->
+        <div style="margin-top: 2rem; padding: 1.25rem; background: rgba(139, 117, 255, 0.07); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <h4 style="color: #FFF; font-size: 0.95rem; margin-bottom: 0.75rem;">Monad Testnet Canonical Deployment Details</h4>
+          <div style="display: grid; grid-template-columns: 180px 1fr; gap: 0.5rem; font-size: 0.85rem; font-family: var(--font-mono);">
+            <span style="color: var(--text-dim);">Contract Name:</span>
+            <span style="color: #FFF;">MonadQueuePlatform</span>
+
+            <span style="color: var(--text-dim);">Chain ID:</span>
+            <span style="color: var(--accent-cyan);">10143 (Monad Testnet)</span>
+
+            <span style="color: var(--text-dim);">RPC Endpoint:</span>
+            <span style="color: #FFF;">https://testnet-rpc.monad.xyz</span>
+
+            <span style="color: var(--text-dim);">Block Explorer:</span>
+            <a href="https://testnet.monadscan.com" target="_blank" style="color: var(--accent-purple);">testnet.monadscan.com</a>
+
+            <span style="color: var(--text-dim);">Contract Address:</span>
+            <span style="color: var(--accent-cyan); word-break: break-all;" id="info-contract-address">0x89C1aB1358362615469E022c07452d3eb03a54C8</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Create Queue Modal -->
+  <div id="modal-create-queue" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 1rem;">
+    <div class="card" style="max-width: 540px; width: 100%; max-height: 90vh; overflow-y: auto;">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-title-icon">➕</span>
+          <span>Create New Queue / Event</span>
+        </div>
+        <button id="btn-close-queue-modal" style="background: transparent; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <form id="form-create-queue">
+        <div class="form-group">
+          <label class="form-label" for="new-queue-title">Queue / Event Title</label>
+          <input class="form-input" type="text" id="new-queue-title" placeholder="e.g. VIP Monad Meetup Access" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="new-queue-metadata">Offchain Metadata URI (Branding & Description)</label>
+          <input class="form-input" type="text" id="new-queue-metadata" value="ipfs://bafybeic73q..." required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="new-queue-capacity">Capacity (Max Slots)</label>
+            <input class="form-input" type="number" id="new-queue-capacity" min="1" max="10000" value="100" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-queue-fee">Fee per Claim (MON)</label>
+            <input class="form-input" type="number" id="new-queue-fee" step="0.0005" value="0.001" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="new-queue-start">Start Time</label>
+            <input class="form-input" type="datetime-local" id="new-queue-start" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-queue-end">End Time</label>
+            <input class="form-input" type="datetime-local" id="new-queue-end" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="new-queue-duration">Slot Duration (Seconds, 0 for open queue)</label>
+          <input class="form-input" type="number" id="new-queue-duration" value="0">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">
+          <span>Deploy Queue Onchain</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Deposit Modal -->
+  <div id="modal-deposit" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 1rem;">
+    <div class="card" style="max-width: 440px; width: 100%;">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-title-icon">💳</span>
+          <span>Deposit Prepaid Credits</span>
+        </div>
+        <button id="btn-close-deposit-modal" style="background: transparent; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <form id="form-deposit-credits">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          Credits are debited only when users claim free slots. Unclaimed credits can be refunded anytime.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label" for="deposit-amount">Deposit Amount (MON)</label>
+          <input class="form-input" type="number" id="deposit-amount" step="0.01" min="0.005" value="0.1" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">
+          <span>Confirm Onchain Deposit</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div>
+        <span>Built for Monad Blitz Hackathon with <strong>MONSKILLS</strong></span>
+      </div>
+      <div class="footer-links">
+        <a href="https://testnet.monadscan.com" target="_blank">MonadScan</a>
+        <a href="https://skills.devnads.com" target="_blank">Monskills Docs</a>
+        <a href="https://github.com/monad-crypto" target="_blank">Monad Ecosystem</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Script (Compatible with both HTTP and direct file:// loading) -->
+  <script src="app.bundle.js"></script>
+</body>
+</html>

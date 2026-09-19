@@ -1,0 +1,46 @@
+type Vendor @entity {
+  id: ID! # Vendor address
+  planType: Int!
+  balance: BigInt!
+  subscriptionExpiresAt: BigInt!
+  isActive: Boolean!
+  totalQueuesCreated: Int!
+  totalSlotsIssued: Int!
+  totalCheckIns: Int!
+  lowBalanceAlert: Boolean!
+  queues: [Queue!]! @derivedFrom(field: "vendor")
+}
+
+type Queue @entity {
+  id: ID! # queueId
+  vendor: Vendor!
+  title: String!
+  capacity: Int!
+  claimedCount: Int!
+  checkedInCount: Int!
+  startTime: BigInt!
+  endTime: BigInt!
+  isActive: Boolean!
+  tickets: [SlotTicket!]! @derivedFrom(field: "queue")
+}
+
+type SlotTicket @entity {
+  id: ID! # ticketId
+  queue: Queue!
+  claimant: String!
+  slotIndex: Int!
+  claimedAt: BigInt!
+  checkedIn: Boolean!
+  checkedInAt: BigInt
+  scanner: String
+  txHash: String!
+}
+
+type BalanceHistory @entity {
+  id: ID! # txHash-logIndex
+  vendor: Vendor!
+  actionType: String! # FUND, WITHDRAW, CLAIM_DEBIT, SUBSCRIPTION
+  amount: BigInt!
+  newBalance: BigInt!
+  timestamp: BigInt!
+}

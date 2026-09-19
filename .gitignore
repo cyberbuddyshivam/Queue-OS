@@ -1,0 +1,14 @@
+# Node / Cache
+node_modules/
+.env
+.env.local
+
+# Foundry
+cache/
+out/
+
+# System & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.log

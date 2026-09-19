@@ -1,0 +1,23 @@
+name: monad-queue-platform-indexer
+field_selection:
+  transaction_fields:
+    - hash
+networks:
+  - id: 10143
+    start_block: 0
+    contracts:
+      - name: MonadQueuePlatform
+        address:
+          - "0x0000000000000000000000000000000000000000"
+        handler: src/EventHandlers.ts
+        events:
+          - event: VendorRegistered(address indexed vendor, uint8 planType)
+          - event: VendorFunded(address indexed vendor, uint256 amount, uint256 newBalance)
+          - event: VendorSubscribed(address indexed vendor, uint256 durationSec, uint256 newExpiresAt)
+          - event: VendorWithdrawn(address indexed vendor, uint256 amount, uint256 remainingBalance)
+          - event: VendorBalanceLow(address indexed vendor, uint256 remainingBalance)
+          - event: QueueCreated(uint256 indexed queueId, address indexed vendor, string title, uint32 capacity, uint64 startTime, uint64 endTime)
+          - event: QueueStatusUpdated(uint256 indexed queueId, bool isActive)
+          - event: SlotClaimed(uint256 indexed queueId, uint256 indexed ticketId, address indexed claimant, uint32 slotIndex)
+          - event: SlotExpired(uint256 indexed queueId, uint256 indexed ticketId)
+          - event: UserCheckedIn(uint256 indexed queueId, uint256 indexed ticketId, address indexed claimant, address scanner)
