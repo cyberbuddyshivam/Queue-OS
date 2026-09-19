@@ -16,7 +16,7 @@
 |:---|:---|:---|
 | **1. Public GitHub Repo** | `https://github.com/cyberbuddyshivam/Queue-OS` | [GitHub Repository](https://github.com/cyberbuddyshivam/Queue-OS) |
 | **2. Contract Address** | `0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F` | [MonadScan Explorer](https://testnet.monadscan.com/address/0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F) |
-| **3. Live Public URL** | `https://cyberbuddyshivam.github.io/Queue-OS/` | [Live Web3 App](https://cyberbuddyshivam.github.io/Queue-OS/) |
+| **3. Live Public URL** | `https://cyberbuddyshivam.github.io/Queue-OS/` | [Live Web3 App](https://queue-os-delta.vercel.app/) |
 | **4. Deployment Target** | Monad Testnet (Chain ID `10143`, 10,000 TPS, 400ms blocks) | `https://testnet-rpc.monad.xyz` |
 
 ---
