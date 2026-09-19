@@ -74,11 +74,11 @@
         <div class="hero-stats">
           <div class="hero-stat-card">
             <div class="hero-stat-label">Active Queues</div>
-            <div class="hero-stat-value" id="stat-active-queues">4</div>
+            <div class="hero-stat-value" id="stat-active-queues">0</div>
           </div>
           <div class="hero-stat-card">
             <div class="hero-stat-label">Free Slots Claimed</div>
-            <div class="hero-stat-value" id="stat-slots-claimed">142</div>
+            <div class="hero-stat-value" id="stat-slots-claimed">0</div>
           </div>
           <div class="hero-stat-card">
             <div class="hero-stat-label">User Gas Saved</div>
@@ -86,7 +86,7 @@
           </div>
           <div class="hero-stat-card">
             <div class="hero-stat-label">Check-in Rate</div>
-            <div class="hero-stat-value" id="stat-checkin-rate">86.4%</div>
+            <div class="hero-stat-value" id="stat-checkin-rate">100%</div>
           </div>
         </div>
       </div>
@@ -135,11 +135,11 @@
             <div class="hero-stats" style="margin-bottom: 1.5rem;">
               <div class="hero-stat-card" style="flex: 1;">
                 <div class="hero-stat-label">Prepaid Balance</div>
-                <div class="hero-stat-value" id="vendor-balance-display">0.450 MON</div>
+                <div class="hero-stat-value" id="vendor-balance-display">0.0000 MON</div>
               </div>
               <div class="hero-stat-card" style="flex: 1;">
                 <div class="hero-stat-label">Plan Type</div>
-                <div class="hero-stat-value" id="vendor-plan-display" style="font-size: 1.1rem;">Prepaid Credits</div>
+                <div class="hero-stat-value" id="vendor-plan-display" style="font-size: 1.1rem;">Not Registered</div>
               </div>
               <div class="hero-stat-card" style="flex: 1;">
                 <div class="hero-stat-label">Burn Rate</div>
@@ -150,6 +150,9 @@
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
               <button class="btn btn-primary" id="btn-open-deposit-modal">
                 <span>➕ Deposit Prepaid Credits</span>
+              </button>
+              <button class="btn btn-primary" id="btn-buy-subscription" style="background: #8B75FF; color: #FFF;">
+                <span>⭐ Buy 30d Subscription (0.05 MON)</span>
               </button>
               <button class="btn btn-secondary" id="btn-open-queue-modal">
                 <span>📅 Create New Queue</span>
@@ -167,7 +170,7 @@
                 <span class="card-title-icon">📑</span>
                 <span>Active Vendor Queues</span>
               </div>
-              <span style="font-size: 0.8rem; color: var(--text-dim);" id="vendor-queue-count">Showing 3 queues</span>
+              <span style="font-size: 0.8rem; color: var(--text-dim);" id="vendor-queue-count">Showing 0 queues</span>
             </div>
 
             <div style="overflow-x: auto;">
@@ -332,6 +335,11 @@
 
             <!-- Manual Ticket Input Form -->
             <form id="form-checkin-scanner">
+              <div id="scanner-auth-banner" style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 6px; font-size: 0.8rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 0.5rem;">
+                <span class="network-dot" id="scanner-auth-dot" style="background: var(--text-dim); flex-shrink: 0;"></span>
+                <span id="scanner-auth-status" style="color: var(--text-secondary); line-height: 1.4;">Connect wallet to verify scanner authorization</span>
+              </div>
+
               <div class="form-group">
                 <label class="form-label" for="scan-queue-id">Queue ID</label>
                 <input class="form-input" type="number" id="scan-queue-id" value="1" required>
@@ -357,7 +365,7 @@
                 <span class="card-title-icon">📋</span>
                 <span>Live Check-in Redemption Log</span>
               </div>
-              <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--accent-cyan);" id="live-checkin-counter">3 Verified Today</span>
+              <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--accent-cyan);" id="live-checkin-counter">0 Verified Today</span>
             </div>
 
             <div style="overflow-x: auto;">
@@ -435,7 +443,7 @@
             <a href="https://testnet.monadscan.com" target="_blank" style="color: var(--accent-purple);">testnet.monadscan.com</a>
 
             <span style="color: var(--text-dim);">Contract Address:</span>
-            <span style="color: var(--accent-cyan); word-break: break-all;" id="info-contract-address">0x89C1aB1358362615469E022c07452d3eb03a54C8</span>
+            <span style="color: var(--accent-cyan); word-break: break-all;" id="info-contract-address">0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F</span>
           </div>
         </div>
       </div>
@@ -544,6 +552,9 @@
     </div>
   </footer>
 
+  <!-- Libraries -->
+  <script src="ethers.umd.min.js"></script>
+  <script src="contractAbi.js"></script>
   <!-- App Script (Compatible with both HTTP and direct file:// loading) -->
   <script src="app.bundle.js"></script>
 </body>

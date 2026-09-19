@@ -1,4 +1,16 @@
-$basePath = "c:\shivam_sharma\MonadBlitz\web"
+$nodeCmd = Get-Command node -ErrorAction SilentlyContinue
+if ($nodeCmd) {
+    $serverJs = Join-Path $PSScriptRoot "server.js"
+    if (Test-Path $serverJs) {
+        & node $serverJs
+        exit $LASTEXITCODE
+    }
+}
+
+$basePath = Join-Path $PSScriptRoot "web"
+if (-not (Test-Path $basePath)) {
+    $basePath = Join-Path (Get-Location) "web"
+}
 $portsToTry = @(3000, 3001, 8080, 8085, 5000)
 $listener = $null
 $activePort = $null

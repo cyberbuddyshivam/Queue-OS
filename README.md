@@ -29,6 +29,19 @@ Queue-OS is a decentralized, high-throughput booking and queue management platfo
 
 ---
 
+## 📡 Live Monad Testnet Deployment
+
+| Parameter | Value |
+|---|---|
+| **Contract Name** | `MonadQueuePlatform` |
+| **Network** | Monad Testnet |
+| **Chain ID** | `10143` |
+| **Contract Address** | [`0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F`](https://testnet.monadscan.com/address/0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F) |
+| **RPC Endpoint** | `https://testnet-rpc.monad.xyz` |
+| **Block Explorer** | [testnet.monadscan.com](https://testnet.monadscan.com/address/0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F) |
+
+---
+
 ## 📁 Project Structure
 
 ```text
@@ -93,7 +106,7 @@ forge test -v
 You can view the interactive platform in three ways:
 
 1. **Instant Browser Open (No Server Needed)**:
-   Double-click `web/index.html` or open `file:///c:/shivam_sharma/MonadBlitz/web/index.html` in Chrome/Edge.
+   Double-click `web/index.html` or open it directly in Chrome/Edge/Brave.
 2. **Local Web Server**:
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\web_server.ps1
