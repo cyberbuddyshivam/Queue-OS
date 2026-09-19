@@ -37,6 +37,10 @@ Queue-OS solves this with a **Vendor-Paid, User-Free (B2B2C)** model leveraging 
 | **Contract Address** | [`0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F`](https://testnet.monadscan.com/address/0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F) |
 | **Block Explorer** | [testnet.monadscan.com](https://testnet.monadscan.com/address/0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F) |
 | **Live Web Application** | [QueueOS Web3 Link](https://queue-os-delta.vercel.app/) |
+| **X** | [X Post Link](https://x.com/shivam_1110_/status/2101283159795265670) |
+| **LinkedIn** | [LinkedIn Post Link](https://lnkd.in/p/dMKcsb9u) |
+| **Instagram** | [Creative Ad Instagram Post Link](https://www.instagram.com/reel/DdeER5DITi-/?stkn=N214dDFzNm9nODRx) |
+| **Instagram** | [Demo Video on Instagram](https://www.instagram.com/reel/DdeEwZ_oGaT/?stkn=cWJlYTJvMjJ1anA4) |
 
 ---
 
