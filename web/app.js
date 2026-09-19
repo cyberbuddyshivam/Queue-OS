@@ -671,23 +671,61 @@ function setupWalletButton() {
               });
             }
           }
+          // Fetch Live Balance from Monad Testnet
+          try {
+            const hexBal = await window.ethereum.request({
+              method: 'eth_getBalance',
+              params: [accounts[0], 'latest']
+            });
+            const balMon = parseInt(hexBal, 16) / 1e18;
+            state.vendor.balance = Number(balMon.toFixed(4));
+            state.vendor.address = accounts[0];
+            renderVendorDashboard();
+          } catch (balErr) {
+            console.warn('Could not fetch live balance from Monad RPC:', balErr);
+          }
           return;
         }
       } catch (err) {
-        console.warn('Wallet connection error, using local sandbox account:', err);
+        console.error('Wallet connection error:', err);
+        showToast(err.message || 'MetaMask connection rejected', 'error');
+        label.textContent = 'Connect Wallet';
+        return;
       }
+    }
+
+    if (window.location.protocol === 'file:') {
+      alert("⚠️ MetaMask cannot inject into 'file://' URLs by default.\n\nTo connect your live MetaMask wallet:\n1. Open chrome://extensions in a new tab\n2. Click 'Details' on MetaMask\n3. Turn ON 'Allow access to file URLs'\n4. Reload this page!\n\nAlternatively, run a local server and open http://localhost:3000\n\nFalling back to Interactive Simulator mode.");
     }
 
     // Default simulation connection
     state.walletConnected = !state.walletConnected;
     if (state.walletConnected) {
       label.textContent = '0x71C...4e92';
-      showToast('Connected to Monad Testnet (Interactive Simulator)');
+      showToast('Connected in Interactive Simulator mode');
     } else {
       label.textContent = 'Connect Wallet';
       showToast('Wallet disconnected');
     }
   });
+
+  if (window.ethereum) {
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts && accounts.length > 0) {
+        state.userAddress = accounts[0];
+        state.vendor.address = accounts[0];
+        label.textContent = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
+        renderVendorDashboard();
+      } else {
+        state.walletConnected = false;
+        label.textContent = 'Connect Wallet';
+      }
+    });
+
+    window.ethereum.on('chainChanged', () => {
+      window.location.reload();
+    });
+  }
 }
 
 // --- Initialization ---

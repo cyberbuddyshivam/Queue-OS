@@ -650,37 +650,152 @@ function setupModals() {
   }
 }
 
-// --- Wallet Connect Button ---
+// --- Wallet Connect Button & Live Monad Testnet Integration ---
+const MONAD_NETWORK_PARAMS = {
+  chainId: '0x279F', // 10143
+  chainName: 'Monad Testnet',
+  nativeCurrency: { name: 'Monad', symbol: 'MON', decimals: 18 },
+  rpcUrls: ['https://testnet-rpc.monad.xyz'],
+  blockExplorerUrls: ['https://testnet.monadscan.com']
+};
+
 function setupWalletButton() {
   const btn = document.getElementById('btn-connect-wallet');
   const label = document.getElementById('wallet-btn-label');
+  const modal = document.getElementById('modal-wallet-connect');
+  const closeModalBtn = document.getElementById('btn-close-wallet-modal');
+  const connectMetaMaskBtn = document.getElementById('btn-metamask-connect');
+  const sandboxBtn = document.getElementById('btn-sandbox-toggle');
+  const statusMsg = document.getElementById('wallet-status-msg');
+
   if (!btn) return;
 
-  btn.addEventListener('click', async () => {
-    if (window.ethereum) {
+  const openModal = () => {
+    if (modal) {
+      modal.style.display = 'flex';
+      if (statusMsg) {
+        if (window.ethereum) {
+          statusMsg.innerHTML = '<span style="color: #059669; font-weight: bold;">🟢 Web3 Wallet detected!</span> Click below to connect and switch to Monad Testnet.';
+        } else if (window.location.protocol === 'file:') {
+          statusMsg.innerHTML = '⚠️ <strong>Notice for local file:// mode:</strong><br>MetaMask blocks file URLs by default. To connect live: go to <code>chrome://extensions</code> → MetaMask Details → enable <em>"Allow access to file URLs"</em>. Or run <code>powershell -File .\\web_server.ps1</code>.';
+        } else {
+          statusMsg.innerHTML = '⚠️ No Web3 wallet extension found. Please install MetaMask to interact on Monad Testnet.';
+        }
+      }
+    }
+  };
+
+  const closeModal = () => {
+    if (modal) modal.style.display = 'none';
+  };
+
+  btn.addEventListener('click', () => {
+    if (state.walletConnected) {
+      // Disconnect
+      state.walletConnected = false;
+      label.textContent = 'Connect Wallet';
+      showToast('Wallet disconnected');
+    } else {
+      openModal();
+    }
+  });
+
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+
+  if (sandboxBtn) {
+    sandboxBtn.addEventListener('click', () => {
+      state.walletConnected = true;
+      state.userAddress = '0x71C...4e92';
+      state.vendor.address = '0x71C...4e92';
+      state.vendor.balance = 0.250;
+      label.textContent = '0x71C...4e92';
+      showToast('Connected in Interactive Simulator mode (0.250 MON balance)');
+      closeModal();
+      renderVendorDashboard();
+    });
+  }
+
+  if (connectMetaMaskBtn) {
+    connectMetaMaskBtn.addEventListener('click', async () => {
+      if (!window.ethereum) {
+        if (window.location.protocol === 'file:') {
+          alert("MetaMask does not inject into file:// URLs by default.\n\nTo enable it:\n1. Open chrome://extensions\n2. Click 'Details' on MetaMask\n3. Enable 'Allow access to file URLs'\n4. Reload this page!\n\nOr click 'Use Interactive Simulator' to test right away.");
+        } else {
+          showToast('MetaMask not detected. Please install MetaMask extension.', 'error');
+        }
+        return;
+      }
+
       try {
+        connectMetaMaskBtn.querySelector('span').textContent = 'Connecting...';
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         if (accounts && accounts[0]) {
-          state.userAddress = accounts[0];
+          const userAddr = accounts[0];
+          state.userAddress = userAddr;
+          state.vendor.address = userAddr;
           state.walletConnected = true;
-          label.textContent = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
-          showToast(`Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`);
+
+          // Auto switch / add Monad Testnet (Chain ID 10143)
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: '0x279F' }]
+            });
+          } catch (switchError) {
+            if (switchError.code === 4902 || switchError.code === -32603) {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [MONAD_NETWORK_PARAMS]
+              });
+            }
+          }
+
+          // Fetch Live Balance from Monad Testnet
+          try {
+            const hexBal = await window.ethereum.request({
+              method: 'eth_getBalance',
+              params: [userAddr, 'latest']
+            });
+            const balMon = parseInt(hexBal, 16) / 1e18;
+            state.vendor.balance = Number(balMon.toFixed(4));
+            console.log(`Live Monad balance for ${userAddr}: ${balMon} MON`);
+          } catch (balErr) {
+            console.warn('Could not fetch live balance from Monad RPC:', balErr);
+          }
+
+          label.textContent = `${userAddr.slice(0, 6)}...${userAddr.slice(-4)}`;
+          showToast(`Connected: ${userAddr.slice(0, 6)}...${userAddr.slice(-4)} on Monad Testnet!`);
+          closeModal();
+          renderVendorDashboard();
           return;
         }
       } catch (err) {
-        console.warn('Wallet connection error, using local sandbox account:', err);
+        console.error('Wallet connection error:', err);
+        showToast(err.message || 'MetaMask connection rejected', 'error');
+      } finally {
+        connectMetaMaskBtn.querySelector('span').textContent = '🦊 Connect MetaMask / Injected Wallet';
       }
-    }
+    });
+  }
 
-    state.walletConnected = !state.walletConnected;
-    if (state.walletConnected) {
-      label.textContent = '0x71C...4e92';
-      showToast('Connected to Monad Testnet (Interactive Simulator)');
-    } else {
-      label.textContent = 'Connect Wallet';
-      showToast('Wallet disconnected');
-    }
-  });
+  // Listen to accounts and chain changes in MetaMask
+  if (window.ethereum) {
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts && accounts.length > 0) {
+        state.userAddress = accounts[0];
+        state.vendor.address = accounts[0];
+        label.textContent = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
+        renderVendorDashboard();
+      } else {
+        state.walletConnected = false;
+        label.textContent = 'Connect Wallet';
+      }
+    });
+
+    window.ethereum.on('chainChanged', () => {
+      window.location.reload();
+    });
+  }
 }
 
 // --- Initialize on DOM ready ---
