@@ -302,11 +302,11 @@ main {
 /* Giant Bold Neubrutalism Typography */
 .hero-title {
   font-family: var(--font-display);
-  font-size: 3.4rem;
+  font-size: 3rem;
   font-weight: 900;
-  line-height: 1.05;
+  line-height: 1.15;
   color: #000000;
-  letter-spacing: -2px;
+  letter-spacing: -1.5px;
   text-transform: uppercase;
   margin-bottom: 1.25rem;
   max-width: 900px;
@@ -360,55 +360,6 @@ main {
   color: #000000;
   font-family: var(--font-display);
   line-height: 1.1;
-}
-
-/* Floating Neubrutalist Stickers (Exact Reference Style from screenshot) */
-.hero-stickers-container {
-  position: absolute;
-  right: 2.5rem;
-  bottom: 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  pointer-events: none;
-}
-
-@media (max-width: 1040px) {
-  .hero-stickers-container {
-    display: none;
-  }
-}
-
-.hero-sticker-card {
-  padding: 1.15rem 1.6rem;
-  border-radius: var(--radius-sm);
-  border: var(--border-thick);
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: #000000;
-  transition: transform 0.2s ease;
-}
-
-.dark-sticker {
-  background: #18181B;
-  color: #FFFFFF;
-  box-shadow: var(--shadow-md);
-  transform: rotate(4deg);
-}
-
-.pink-sticker {
-  background: var(--neu-pink);
-  color: #000000;
-  box-shadow: var(--shadow-md);
-  transform: rotate(-3deg);
-}
-
-.mint-sticker {
-  background: var(--neu-mint);
-  color: #000000;
-  box-shadow: var(--shadow-sm);
-  transform: rotate(2deg);
 }
 
 /* ==========================================================================
