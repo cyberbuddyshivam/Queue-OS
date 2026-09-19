@@ -8,7 +8,7 @@ networks:
     contracts:
       - name: MonadQueuePlatform
         address:
-          - "0x0000000000000000000000000000000000000000"
+          - "0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F"
         handler: src/EventHandlers.ts
         events:
           - event: VendorRegistered(address indexed vendor, uint8 planType)

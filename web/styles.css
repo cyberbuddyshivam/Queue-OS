@@ -257,6 +257,15 @@ header {
   box-shadow: 0px 0px 0px #000;
 }
 
+.btn-connect.connected {
+  background: #00F5D4;
+}
+
+.btn-connect.connected:hover {
+  background: #FF4D6D;
+  color: #FFFFFF;
+}
+
 /* ==========================================================================
    MAIN CONTAINER & HERO SECTION (Vibrant Yellow Backdrop)
    ========================================================================== */

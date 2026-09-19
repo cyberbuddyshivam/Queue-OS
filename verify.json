@@ -1,7 +1,7 @@
 {
   "chainId": 10143,
-  "contractAddress": "0x0000000000000000000000000000000000000000",
+  "contractAddress": "0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F",
   "contractName": "src/MonadQueuePlatform.sol:MonadQueuePlatform",
-  "compilerVersion": "v0.8.28+commit.7893614a",
-  "notes": "Verification payload for https://agents.devnads.com/v1/verify. Populated after deployment using `forge verify-contract --show-standard-json-input`."
+  "compilerVersion": "v0.8.28",
+  "notes": "Verification payload for https://agents.devnads.com/v1/verify."
 }
