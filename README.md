@@ -36,7 +36,7 @@ Queue-OS solves this with a **Vendor-Paid, User-Free (B2B2C)** model leveraging 
 | **Contract Name** | `MonadQueuePlatform` |
 | **Contract Address** | [`0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F`](https://testnet.monadscan.com/address/0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F) |
 | **Block Explorer** | [testnet.monadscan.com](https://testnet.monadscan.com/address/0x6cCaC1BCEd3C6DEd7e11246723276d6B3eaf480F) |
-| **Live Web Application** | [cyberbuddyshivam.github.io/Queue-OS](https://queue-os-delta.vercel.app/) |
+| **Live Web Application** | [QueueOS Web3 Link](https://queue-os-delta.vercel.app/) |
 
 ---
 
